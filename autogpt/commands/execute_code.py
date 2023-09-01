@@ -46,11 +46,7 @@ def execute_python_file(filename: str, config: Config) -> str:
             encoding="utf8",
             cwd=CFG.workspace_path,
         )
-        if result.returncode == 0:
-            return result.stdout
-        else:
-            return f"Error: {result.stderr}"
-
+        return result.stdout if result.returncode == 0 else f"Error: {result.stderr}"
     try:
         client = docker.from_env()
         # You can replace this with the desired Python image/version
@@ -128,10 +124,7 @@ def validate_command(command: str, config: Config) -> bool:
     for keyword in config.allow_commands:
         if keyword in tokens:
             return True
-    if config.allow_commands:
-        return False
-
-    return True
+    return not config.allow_commands
 
 
 @command(
